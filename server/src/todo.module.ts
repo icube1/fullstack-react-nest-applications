@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TodoController } from './app.controller';
-import { TodoService } from './app.service';
-import { Task } from './task.entity';
+import { TodoController } from './todo.controller';
+import { TodoService } from './todo.service';
+import { Task } from './todo.entity';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 @Module({

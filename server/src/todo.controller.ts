@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Body, Delete, NotFoundException, Post, Patch } from '@nestjs/common';
-import { TodoService } from './app.service';
-import { Task } from './task.entity';
+import { TodoService } from './todo.service';
+import { Task } from './todo.entity';
 
 @Controller('todo')
 export class TodoController {
@@ -34,7 +34,7 @@ export class TodoController {
   }
 
   @Patch(':id')
-    async updateTodo(@Param('id') id: number, @Body() task: Task): Promise<Task> {
+  async updateTodo(@Param('id') id: number, @Body() task: Task): Promise<Task> {
     const updatedTodo = await this.todoService.updateTodo(id, task);
     if (!updatedTodo) {
       throw new NotFoundException(`Todo with id ${id} not found`);

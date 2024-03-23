@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Task } from './task.entity';
+import { Task } from './todo.entity';
 
 @Injectable()
 export class TodoService {
@@ -40,11 +40,11 @@ export class TodoService {
   async updateTodo(id: number, taskData: Partial<Task>): Promise<Task> {
     try {
       const todoToUpdate = await this.taskRepository.findOne({ where: { id } });
-      
+
       if (!todoToUpdate) {
         throw new NotFoundException(`Todo with id ${id} not found`);
       }
-    
+
       Object.assign(todoToUpdate, taskData);
       await this.taskRepository.save(todoToUpdate);
       const todoUpdated = await this.taskRepository.findOne({ where: { id } });
