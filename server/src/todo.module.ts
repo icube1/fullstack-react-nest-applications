@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TodoController } from './todo.controller';
 import { TodoService } from './todo.service';
 import { Task } from './todo.entity';
+import dataSource from './data.source'
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 @Module({
@@ -12,13 +13,7 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
       envFilePath: '.env',
     }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.POSTGRES_HOST,
-      port: 5432,
-      username: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DATABASE,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      ...dataSource,
       synchronize: true,
       ssl: true,
     } as PostgresConnectionOptions),
