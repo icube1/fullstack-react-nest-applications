@@ -25,7 +25,6 @@
 Якщо у вас виникнуть проблеми з підключенням до PostgreSQL, використайте наступні змінні середовища:
 
 - `POSTGRES_URL`: `postgres://default:YBOh7bAPJVD9@ep-little-breeze-a2npm9dk-pooler.eu-central-1.aws.neon.tech:5432/verceldb?sslmode=require`
-- `POSTGRES_PRISMA_URL`: `postgres://default:YBOh7bAPJVD9@ep-little-breeze-a2npm9dk-pooler.eu-central-1.aws.neon.tech:5432/verceldb?sslmode=require&pgbouncer=true&connect_timeout=15`
 - `POSTGRES_URL_NO_SSL`: `postgres://default:YBOh7bAPJVD9@ep-little-breeze-a2npm9dk-pooler.eu-central-1.aws.neon.tech:5432/verceldb`
 - `POSTGRES_URL_NON_POOLING`: `postgres://default:YBOh7bAPJVD9@ep-little-breeze-a2npm9dk.eu-central-1.aws.neon.tech:5432/verceldb?sslmode=require`
 - `POSTGRES_USER`: `default`
