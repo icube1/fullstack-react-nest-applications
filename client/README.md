@@ -1,30 +1,23 @@
 # React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Клієнтська частина додатку
 
-Currently, two official plugins are available:
+Це клієнтська частина додатку, яка відповідає за інтерфейс користувача та взаємодію з сервером.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Запуск додатку
 
-## Expanding the ESLint configuration
+1. Відкрийте новий термінал.
+2. Перейдіть до директорії, де знаходиться клієнтський код.
+3. Запустіть клієнтський додаток, виконавши команду запуску, яка зазвичай є `npm start`.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Перевірка роботи
 
-- Configure the top-level `parserOptions` property like this:
+1. Після запуску клієнтського додатку відкрийте веб-браузер.
+2. Перейдіть на адресу, де працює ваш клієнтський додаток (зазвичай це `http://localhost:3000/`).
+3. Переконайтеся, що клієнтська частина програми відображається і взаємодіє з сервером так, як ви очікуєте.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+## Використані технології
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- **React**: JavaScript бібліотека для побудови інтерфейсів користувача.
+- **Axios**: Бібліотека для здійснення HTTP-запитів з клієнтської сторони.
+- **TypeScript**: Суперсет JavaScript, який додає статичну типізацію до мови та поліпшує її функціональність.

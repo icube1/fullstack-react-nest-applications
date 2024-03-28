@@ -15,7 +15,6 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
     TypeOrmModule.forRoot({
       ...dataSource,
       synchronize: true,
-      ssl: true,
     } as PostgresConnectionOptions),
     TypeOrmModule.forFeature([Task]),
   ],
