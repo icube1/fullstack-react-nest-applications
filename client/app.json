@@ -1,0 +1,88 @@
+{
+	"info": {
+		"_postman_id": "e2479ba3-34cb-4a51-849d-b5945adb2581",
+		"name": "Booking REST API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20050397"
+	},
+	"item": [
+		{
+			"name": "YANDEX",
+			"item": [
+				{
+					"name": "Get Token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/getToken",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"getToken"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Calc Feed",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/yandex/v1/companies/calcFeed",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"yandex",
+								"v1",
+								"companies",
+								"calcFeed"
+							]
+						}
+					},
+					"response": []
+				},
+				// Add other requests based on your API description
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjM4NDY0MjZ9.4x9CkzTKWXgtcSE_iIzTF1JTIaDl5FLQxaUMcMzEavs",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [""]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [""]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "localhost:3000",
+			"type": "string"
+		}
+	]
+}

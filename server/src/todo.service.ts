@@ -17,7 +17,7 @@ export class TodoService {
   async getTodoById(id: number): Promise<Task> {
     const todo = await this.taskRepository.findOne({ where: { id } });
     if (!todo) {
-      throw new NotFoundException(`Todo with id ${id} not found`);
+      throw new NotFoundException(`Item with id ${id} not found`);
     }
     return todo;
   }

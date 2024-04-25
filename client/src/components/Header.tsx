@@ -1,102 +1,96 @@
-import React, {
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import classNames from 'classnames';
-import { TodosContext } from '../TodoContext/TodoContext';
-import * as todosServices from '../api/todos';
-import { TodoStatus } from '../types/TodoStatus';
+import React, { useContext, useRef, useState, useEffect } from 'react';
+import { Button, TextInput, Select } from '@gravity-ui/uikit';
+import { ApplicationsContext } from './AppContext/AppContext';
 
 export const Header: React.FC = () => {
-  const {
-    addTodo,
-    onToggleAll,
-    todos,
-    setErrorMessage,
-    setTempTodo,
-    tempTodo,
-  } = useContext(TodosContext);
+  const { addApplication, updateApplication, setErrorMessage, applications, editMode, setEditMode } = useContext(ApplicationsContext);
+  const [selectedApplication, setSelectedApplication] = useState(null);
 
-  const [todoTitle, setTodoTitle] = useState('');
-  const [disableInput, setDisableInput] = useState(false);
-
-  const isAllTodosCompleted = todos.every(({ status }) => status === TodoStatus.Done);
-  const isThereProcessingTodos = todos.some(({status}) => status === TodoStatus.Process || status === TodoStatus.Done)
-
-  const handleToggleAll = () => {
-    const filteredNotStartedTodos = todos.filter(todo => todo.status !== TodoStatus.Undone)
-    onToggleAll(filteredNotStartedTodos);
+  const initialFormData = {
+    appName: '',
+    status: 'new',
+    clientCompanyName: '',
+    carrierName: '',
+    carrierPhone: '',
+    comments: '',
+    atiCode: '',
+    disableInput: false
   };
 
-  const todoTitleFocus = useRef<HTMLInputElement>(null);
+  const [formData, setFormData] = useState(initialFormData);
 
   useEffect(() => {
-    if (todoTitleFocus.current) {
-      todoTitleFocus.current.focus();
+    if (editMode && selectedApplication) {
+      setFormData(selectedApplication);
+    } else {
+      setFormData(initialFormData);
     }
-  }, [todos.length, tempTodo]);
+  }, [editMode, selectedApplication]);
+
+  const appNameFocus = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (appNameFocus.current) {
+      appNameFocus.current.focus();
+    }
+  }, [applications.length]);
+
+  const handleChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, [field]: event.target.value }));
+  };
 
   const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (!todoTitle.trim()) {
-      setErrorMessage('Title should not be empty');
-      setTodoTitle('');
+    if (!formData.appName.trim() || !formData.clientCompanyName.trim() || !formData.carrierName.trim() || !formData.carrierPhone.trim()) {
+      setErrorMessage('All fields are required');
+      return;
     }
 
-    if (!!todoTitle.trim()) {
-      setDisableInput(true);
-      setTempTodo({
-        id: 0,
-        title: todoTitle.trim(),
-        status: TodoStatus.Undone,
-      });
-
-      todosServices.createTodos({
-        title: todoTitle.trim(),
-        status: TodoStatus.Undone,
-      }).then(response => {
-        setTodoTitle('');
-        addTodo(response.data);
-        setTempTodo(null);
+    const action = editMode ? addApplication : updateApplication;
+    setFormData(prev => ({ ...prev, disableInput: true }));
+    action(formData)
+      .then(() => {
+        setEditMode(false);
+        setFormData(initialFormData);
       })
-        .catch(() => {
-          setErrorMessage('Unable to add a todo');
-          setTempTodo(null);
-        })
-        .finally(() => {
-          setDisableInput(false);
-        });
-    }
+      .catch(() => {
+        setErrorMessage(`Unable to ${editMode ? 'edit' : 'add'} application`);
+      })
+      .finally(() => {
+        setFormData(prev => ({ ...prev, disableInput: false }));
+      });
   };
 
   return (
-    <header className="todoapp__header">
-
-      {isThereProcessingTodos && (
-        <button
-          type="button"
-          className={classNames('todoapp__toggle-all', {
-            active: isAllTodosCompleted,
-          })}
-          onClick={handleToggleAll}
-        />
-      )}
-
-      <form
-        onSubmit={(event) => handleOnSubmit(event)}
-      >
-        <input
+    <header className="app-management__header">
+      <form style={{backgroundColor: 'rgba(0,0,0,0.8)'}} onSubmit={handleOnSubmit}>
+        <TextInput
           type="text"
-          className="todoapp__new-todo"
-          placeholder="What needs to be done?"
-          ref={todoTitleFocus}
-          value={todoTitle}
-          disabled={disableInput}
-          onChange={(event) => setTodoTitle(event.currentTarget.value)}
+          className="app-management__new-app"
+          placeholder="Enter application name"
+          ref={appNameFocus}
+          value={formData.appName}
+          disabled={formData.disableInput}
+          onChange={handleChange('appName')}
         />
+        {editMode && (
+          <Select
+            value={[formData.status]}
+            label='Статус'
+            onUpdate={(value)=>formData.status = value[0]}
+            options={[
+              { value: 'new', content: 'Новая' },
+              { value: 'in progress', content: 'В процессе' },
+              { value: 'finished', content: 'Завершена' }
+            ]}
+          />
+        )}
+        <TextInput type="text" placeholder="Client Company Name" value={formData.clientCompanyName} onChange={handleChange('clientCompanyName')} />
+        <TextInput type="text" placeholder="Carrier Name" value={formData.carrierName} onChange={handleChange('carrierName')} />
+        <TextInput type="text" placeholder="Carrier Phone" value={formData.carrierPhone} onChange={handleChange('carrierPhone')} />
+        <TextInput type="text" placeholder="Comments" value={formData.comments} onChange={handleChange('comments')} />
+        <TextInput type="text" placeholder="ATI Code" value={formData.atiCode} onChange={handleChange('atiCode')} />
+        <Button type="submit" disabled={formData.disableInput}>{!editMode ? 'Add' : 'Update'} Application</Button>
       </form>
     </header>
   );

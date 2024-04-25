@@ -5,11 +5,14 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import './styles/index.scss';
 
 import { App } from './App';
-import { TodosProvider } from './TodoContext/TodoContext';
+import { ApplicationsProvider } from './components/AppContext/AppContext';
+import { ThemeProvider } from '@gravity-ui/uikit';
 
 createRoot(document.getElementById('root') as HTMLDivElement)
   .render(
-    <TodosProvider>
-      <App />
-    </TodosProvider>,
+    <ThemeProvider>
+        <ApplicationsProvider>
+            <App />
+        </ApplicationsProvider>,
+    </ThemeProvider>
   );

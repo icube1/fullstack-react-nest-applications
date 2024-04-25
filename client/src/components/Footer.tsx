@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { TodosContext } from '../TodoContext/TodoContext';
 import { Status } from '../types/Status';
 import { TodoStatus } from '../types/TodoStatus';
+import { Button } from '@gravity-ui/uikit';
 
 export const Footer: React.FC = () => {
   const {
@@ -71,14 +72,14 @@ export const Footer: React.FC = () => {
           {Status.Completed}
         </a>
       </nav>
-      <button
+      <Button
         type="button"
         className="todoapp__clear-completed"
         onClick={deleteCompletedTodos}
         disabled={!completedTodos.length}
       >
         Clear completed
-      </button>
+      </Button>
     </footer>
   );
 };

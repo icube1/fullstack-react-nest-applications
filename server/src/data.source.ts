@@ -2,7 +2,7 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
 
 const dataSource: PostgresConnectionOptions = {
   type: 'postgres',
-  url: process.env.POSTGRES_URL || "postgres://admin:root@localhost:5432/todo_list?scheme=public",
+  url: process.env.POSTGRES_URL || "postgres://postgres:postgres@localhost:5432/postgres?scheme=public",
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   synchronize: true,
 };
