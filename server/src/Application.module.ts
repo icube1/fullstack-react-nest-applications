@@ -6,9 +6,13 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
 import dataSource from './data.source';
 import { ConfigModule } from '@nestjs/config';
 import { ApplicationController } from './Application.controller';
+import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
     imports: [
+        AuthModule,
         ConfigModule.forRoot({
           envFilePath: '.env',
         }),
@@ -19,6 +23,6 @@ import { ApplicationController } from './Application.controller';
         TypeOrmModule.forFeature([Application]),
       ],
       controllers: [ApplicationController],
-      providers: [ApplicationService],
+      providers: [ApplicationService, AuthService],
 })
 export class ApplicationModule {}
