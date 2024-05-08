@@ -1,59 +1,91 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
 import {
-  LoginVendorDtoType,
-  LoginCustomerDto,
-  CreateCustomerDto,
-  CreateVendorDtoType,
-  LoginVendorDto,
-  CreateCustomerDtoType,
-  CreateVendorDto,
-  LoginCustomerDtoType,
-} from './dto';
-import { JwtService } from '@nestjs/jwt';
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+
+import * as bcrypt from 'bcryptjs';
+
+import { CreateUserDto } from '../user/dto/create-user.dto';
+import { LoginUserDto } from '../user/dto/login-user.dto';
+
+import { UserService } from '../user/user.service';
+import { TokenService } from '../token/token.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly tokenService: TokenService,
+  ) {}
 
-  async registerVendor(createVendorDto: CreateVendorDtoType) {
-    const result = CreateVendorDto.safeParse(createVendorDto);
-    if (!result.success) {
-      throw new Error('Validation failed');
-    }
-    return { message: 'User registered successfully' };
+  async login(userDto: LoginUserDto) {
+    const { id } = await this.validateUser(userDto);
+
+    return this.tokenService.generateTokens(id);
   }
 
-  async loginVendor(loginVendorDto: LoginVendorDtoType) {
-    const result = LoginVendorDto.safeParse(loginVendorDto);
-    if (!result.success) {
-      throw new UnauthorizedException('Validation failed');
-    }
-    const payload = {
-      email: loginVendorDto.email,
-      password: loginVendorDto.password,
-    };
-    const token = this.jwtService.sign(payload);
-    return { message: 'Login successful', access_token: token };
+  async logout(refreshToken) {
+    try {
+      const { id } = await this.tokenService.verifyRefreshToken(refreshToken);
+
+      return this.tokenService.removeRefreshToken(id);
+    } catch (e) {}
   }
 
-  async registerCustomer(createCustomerDto: CreateCustomerDtoType) {
-    const result = CreateCustomerDto.safeParse(createCustomerDto);
-    if (!result.success) {
-      throw new Error('Validation failed');
-    }
-    return { message: 'User registered successfully', code: 201 };
+  async registration(userDto: CreateUserDto) {
+    const candidate = await this.userService.findOneByEmail(userDto.email);
+
+    if (candidate) return null;
+
+    const hashedPassword = await bcrypt.hash(userDto.password, 7);
+    const user = await this.userService.create({
+      ...userDto,
+      password: hashedPassword,
+    });
+
+    return this.tokenService.generateTokens(user.id);
   }
 
-  async loginCustomer(loginCustomerDto: LoginCustomerDtoType) {
-    const result = LoginCustomerDto.safeParse(loginCustomerDto);
-    if (!result.success) {
-      throw new UnauthorizedException('Validation failed');
+  async updateAccessToken(refreshToken: string) {
+    const id = await this.tokenService.isRefreshTokenValid(refreshToken);
+
+    const { accessToken } = await this.tokenService.generateTokens(id);
+
+    return accessToken;
+  }
+
+  async parseAuthorizationHeaders(authHeaders: string) {
+    const tokenType = authHeaders.split(' ')[0];
+    const token = authHeaders.split(' ')[1];
+
+    if (!token || tokenType !== 'Bearer') {
+      throw new UnauthorizedException('Incorrect auth headers');
     }
-    const payload = {
-      email: loginCustomerDto.email,
-      password: loginCustomerDto.password,
-    };
-    const token = this.jwtService.sign(payload);
-    return { message: 'Login successful', access_token: token };
+
+    const payload = this.tokenService.verifyAccessToken(token);
+
+    return payload;
+  }
+
+  private async validateUser(userDto: LoginUserDto) {
+    const user = await this.userService.findOneByEmail(userDto.email);
+
+    if (!user) {
+      throw new NotFoundException(
+        `There is no user under this email ${userDto.email}`,
+      );
+    }
+
+    const passwordEquals = await bcrypt.compare(
+      userDto.password,
+      user.password,
+    );
+
+    if (passwordEquals) {
+      return user;
+    }
+
+    throw new UnauthorizedException({ message: 'Incorrect password' });
   }
 }
